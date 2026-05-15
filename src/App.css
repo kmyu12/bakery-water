@@ -24,21 +24,21 @@ html, body {
 .app-header {
   background: #1e3a5f;
   color: #fff;
-  padding: 18px 16px 14px;
+  padding: 14px 14px 12px;
 }
 
 .app-title {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .header-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .meta-chip {
@@ -46,8 +46,8 @@ html, body {
   align-items: center;
   background: rgba(255,255,255,0.12);
   border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 12px;
+  padding: 2px 9px;
+  font-size: 11px;
 }
 
 .meta-chip.highlight {
@@ -57,25 +57,25 @@ html, body {
 }
 
 .app-desc {
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.7;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* ═══════════════════════════════════════════
    섹션
 ═══════════════════════════════════════════ */
 .section {
-  padding: 12px 12px 0;
+  padding: 10px 10px 0;
 }
 
 /* ═══════════════════════════════════════════
-   어제 기준값 입력 카드
+   어제 기준값 입력 카드 (레거시 스타일 유지)
 ═══════════════════════════════════════════ */
 .baseline-card {
   background: #fff;
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1.5px solid #e5e7eb;
 }
 
@@ -103,7 +103,7 @@ html, body {
   background: #dcfce7;
   color: #15803d;
   border-radius: 20px;
-  padding: 2px 8px;
+  padding: 2px 7px;
 }
 
 .baseline-desc {
@@ -116,20 +116,20 @@ html, body {
 .baseline-fields {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 
 .bl-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .bl-label {
   font-size: 12px;
   color: #6b7280;
   white-space: nowrap;
-  width: 100px;
+  width: 96px;
   flex-shrink: 0;
 }
 
@@ -147,11 +147,11 @@ html, body {
 }
 
 .batch-no-input {
-  width: 64px;
-  padding: 6px 8px;
+  width: 56px;
+  padding: 5px 7px;
   border: 1.5px solid #d1d5db;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   text-align: right;
   -moz-appearance: textfield;
@@ -170,15 +170,15 @@ html, body {
   background: #dbeafe;
   color: #1d4ed8;
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 2px 5px;
   white-space: nowrap;
 }
 
 .ml4 { margin-left: 4px; }
 
 .baseline-summary {
-  margin-top: 10px;
-  padding: 8px 12px;
+  margin-top: 8px;
+  padding: 7px 10px;
   background: #f0fdf4;
   border: 1px solid #86efac;
   border-radius: 6px;
@@ -186,10 +186,8 @@ html, body {
   color: #15803d;
   display: flex;
   align-items: center;
-  gap: 0;
 }
 
-/* 소형 아웃라인 버튼 */
 .btn-xs {
   font-size: 11px;
   height: 28px;
@@ -211,7 +209,7 @@ html, body {
 .reference-box {
   background: #fff;
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1.5px solid #e5e7eb;
 }
 
@@ -219,12 +217,12 @@ html, body {
   border-color: #d1d5db;
   background: #f9fafb;
   text-align: center;
-  padding: 16px;
+  padding: 14px;
 }
 
 .ref-empty-text {
   color: #6b7280;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .reference-ok  { border-color: #3b82f6; }
@@ -234,11 +232,11 @@ html, body {
   display: flex;
   align-items: baseline;
   gap: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .ref-title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #2563eb;
   text-transform: uppercase;
@@ -255,28 +253,28 @@ html, body {
 .ref-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 5px 14px;
+  gap: 4px 12px;
   align-items: center;
 }
 
 .ref-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #6b7280;
   white-space: nowrap;
 }
 
 .ref-value {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #111827;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .ref-value-main {
   color: #1e3a5f;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .ref-badge {
@@ -284,23 +282,23 @@ html, body {
   background: #dbeafe;
   color: #1d4ed8;
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 2px 5px;
   font-weight: 700;
 }
 
 .ref-missing {
   color: #ef4444;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .ref-missing-alert {
-  margin-top: 10px;
-  padding: 7px 10px;
+  margin-top: 8px;
+  padding: 6px 9px;
   background: #fef3c7;
   border: 1px solid #fcd34d;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   color: #92400e;
   line-height: 1.4;
 }
@@ -311,7 +309,7 @@ html, body {
 .btn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 7px;
 }
 
 .btn-full {
@@ -328,11 +326,11 @@ html, body {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 0 14px;
-  height: 46px;
-  min-height: 46px;
+  padding: 0 12px;
+  height: 44px;
+  min-height: 44px;
   transition: filter 0.12s, opacity 0.12s, transform 0.1s;
   white-space: nowrap;
   letter-spacing: -0.2px;
@@ -341,41 +339,42 @@ html, body {
 .btn:active  { filter: brightness(0.87); transform: scale(0.98); }
 .btn:disabled { opacity: 0.38; cursor: not-allowed; transform: none; }
 
-/* 색상 */
 .btn-primary   { background: #2563eb; color: #fff; }
 .btn-secondary { background: #0e7490; color: #fff; }
-.btn-test      { background: #7c3aed; color: #fff; font-size: 13px; }
-.btn-danger    { background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; font-size: 13px; }
+.btn-test      { background: #7c3aed; color: #fff; }
+.btn-danger    { background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; }
 
 /* 테이블 내부 소형 버튼 */
 .btn-confirm {
   background: #16a34a; color: #fff;
   font-size: 11px; font-weight: 700;
-  height: 32px; min-height: 32px;
-  padding: 0 9px; border-radius: 6px;
+  height: 30px; min-height: 30px;
+  padding: 0 8px; border-radius: 5px;
+  white-space: nowrap;
 }
 .btn-input {
   background: #ca8a04; color: #fff;
   font-size: 11px; font-weight: 700;
-  height: 32px; min-height: 32px;
-  padding: 0 9px; border-radius: 6px;
+  height: 30px; min-height: 30px;
+  padding: 0 8px; border-radius: 5px;
+  white-space: nowrap;
 }
 .btn-save {
   background: #16a34a; color: #fff;
-  font-size: 11px; height: 30px; min-height: 30px;
+  font-size: 11px; height: 28px; min-height: 28px;
   padding: 0 8px; border-radius: 5px;
 }
 .btn-cancel {
   background: #6b7280; color: #fff;
-  font-size: 11px; height: 30px; min-height: 30px;
+  font-size: 11px; height: 28px; min-height: 28px;
   padding: 0 8px; border-radius: 5px;
 }
 .btn-delete {
   background: transparent; color: #ef4444;
   border: 1px solid #fca5a5; border-radius: 5px;
   font-size: 13px;
-  height: 30px; min-height: 30px;
-  padding: 0 8px;
+  height: 28px; min-height: 28px;
+  padding: 0 6px;
 }
 
 /* ═══════════════════════════════════════════
@@ -383,15 +382,15 @@ html, body {
 ═══════════════════════════════════════════ */
 .table-section { padding-bottom: 0; }
 
-.date-group { margin-top: 16px; }
+.date-group { margin-top: 14px; }
 
 .date-group-label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: #1e3a5f;
-  padding: 0 0 7px 2px;
+  padding: 0 0 6px 2px;
   border-bottom: 2px solid #3b82f6;
-  margin: 0 12px;
+  margin: 0 10px;
 }
 .date-group-label.muted {
   color: #9ca3af;
@@ -399,14 +398,14 @@ html, body {
 }
 
 .today-label-row {
-  margin: 0 0 0 0;
+  margin: 0;
   padding-left: 2px;
 }
 
 .baseline-label-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* 반죽 온도 2차 + 배지 묶음 */
@@ -414,13 +413,13 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 /* 버튼 섹션 하단 여백 */
 .bottom-btn-section {
-  padding-top: 16px;
-  padding-bottom: 32px;
+  padding-top: 14px;
+  padding-bottom: 28px;
 }
 
 /* 가로 스크롤 래퍼 */
@@ -430,7 +429,6 @@ html, body {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-top: none;
-  margin: 0 0 0 0;
 }
 
 /* ═══════════════════════════════════════════
@@ -440,7 +438,7 @@ html, body {
   border-collapse: collapse;
   width: max-content;
   min-width: 100%;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* 헤더 */
@@ -449,7 +447,7 @@ html, body {
   color: #475569;
   font-size: 11px;
   font-weight: 700;
-  padding: 9px 10px;
+  padding: 7px 5px;
   text-align: center;
   white-space: nowrap;
   border-bottom: 2px solid #e2e8f0;
@@ -470,29 +468,37 @@ html, body {
 
 /* 데이터 행 */
 .record-table td {
-  padding: 8px 8px;
+  padding: 6px 4px;
   border-bottom: 1px solid #f3f4f6;
   border-right: 1px solid #f3f4f6;
   vertical-align: middle;
   text-align: center;
 }
 
-.row-today td    { background: #ffffff; }
+.row-today td     { background: #ffffff; }
 .row-yesterday td { background: #fafafa; }
-.row-yesterday   { opacity: 0.82; }
+.row-yesterday    { opacity: 0.82; }
 .row-baseline td  { background: #fafbff; }
 
 /* ═══════════════════════════════════════════
-   컬럼 너비
+   컬럼 너비 (CSS 변수로 관리)
 ═══════════════════════════════════════════ */
-.td-batch  { min-width: 88px;  }
-.td-date   { min-width: 110px; white-space: nowrap; color: #6b7280; font-size: 12px; }
-.td-temp   { min-width: 100px; }
-.td-note   { min-width: 180px; }
-.td-del    { min-width: 44px;  }
+:root {
+  --col-batch:     60px;
+  --col-temp:      88px;
+  --col-predicted: 96px;
+  --col-confirmed: 110px;
+  --col-note:      120px;
+  --col-del:       36px;
+}
 
-.td-predicted { min-width: 130px; background: #eff6ff; }
-.td-confirmed { min-width: 150px; background: #f0fdf4; }
+.td-batch     { min-width: var(--col-batch);     }
+.td-temp      { min-width: var(--col-temp);      }
+.td-note      { min-width: var(--col-note);      }
+.td-del       { min-width: var(--col-del);       }
+
+.td-predicted { min-width: var(--col-predicted); background: #eff6ff; }
+.td-confirmed { min-width: var(--col-confirmed); background: #f0fdf4; }
 
 /* sticky 첫 컬럼 데이터 */
 .td-sticky {
@@ -504,6 +510,7 @@ html, body {
 }
 
 .row-yesterday .td-sticky { background: #fafafa; }
+.row-baseline .td-sticky  { background: #fafbff; }
 
 /* ═══════════════════════════════════════════
    회차 + 상태 배지
@@ -512,37 +519,37 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 2px 0;
+  gap: 3px;
+  padding: 1px 0;
 }
 
 .batch-no {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: #1e3a5f;
   white-space: nowrap;
 }
 
 .status-badge {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   border-radius: 20px;
-  padding: 2px 7px;
+  padding: 1px 5px;
   white-space: nowrap;
   line-height: 1.4;
 }
 
-.badge-input     { background: #f3f4f6; color: #6b7280; }
-.badge-nobase    { background: #fef3c7; color: #92400e; }
-.badge-predicted { background: #dbeafe; color: #1d4ed8; }
+.badge-input      { background: #f3f4f6; color: #6b7280; }
+.badge-nobase     { background: #fef3c7; color: #92400e; }
+.badge-predicted  { background: #dbeafe; color: #1d4ed8; }
 .badge-water-done { background: #d1fae5; color: #065f46; }
-.badge-done      { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
+.badge-done       { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
 
 /* ═══════════════════════════════════════════
    예측값 표시
 ═══════════════════════════════════════════ */
 .predicted-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
   color: #1d4ed8;
   letter-spacing: -0.5px;
@@ -550,7 +557,7 @@ html, body {
 }
 
 .predicted-status {
-  font-size: 11px;
+  font-size: 10px;
   color: #94a3b8;
   line-height: 1.4;
   display: block;
@@ -564,25 +571,25 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .confirmed-display {
-  min-height: 24px;
+  min-height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .confirmed-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
   color: #15803d;
   letter-spacing: -0.5px;
 }
 
 .unconfirmed-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #9ca3af;
   font-style: italic;
 }
@@ -591,7 +598,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 /* ═══════════════════════════════════════════
@@ -610,16 +617,16 @@ html, body {
 .temp-input-wrap {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   justify-content: center;
 }
 
 .temp-input {
-  width: 70px;
-  padding: 6px 6px;
+  width: 58px;
+  padding: 5px 5px;
   border: 1.5px solid #d1d5db;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   text-align: right;
   background: #fff;
@@ -634,11 +641,11 @@ html, body {
 .temp-input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px #bfdbfe;
+  box-shadow: 0 0 0 2px #bfdbfe;
 }
 
 .unit {
-  font-size: 11px;
+  font-size: 10px;
   color: #9ca3af;
   white-space: nowrap;
   user-select: none;
@@ -648,11 +655,11 @@ html, body {
    비고 입력
 ═══════════════════════════════════════════ */
 .note-input {
-  width: 160px;
-  padding: 6px 8px;
+  width: 108px;
+  padding: 5px 6px;
   border: 1.5px solid #e5e7eb;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   color: #374151;
   background: #fff;
   transition: border-color 0.15s;
@@ -669,30 +676,30 @@ html, body {
 ═══════════════════════════════════════════ */
 .empty-state {
   text-align: center;
-  padding: 48px 20px 32px;
+  padding: 40px 16px 28px;
   background: #fff;
   border: 1.5px dashed #d1d5db;
-  border-radius: 12px;
-  margin-top: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 
 .empty-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #374151;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .empty-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: #9ca3af;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .empty-btns {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -702,27 +709,27 @@ html, body {
 ═══════════════════════════════════════════ */
 .toast {
   position: fixed;
-  bottom: 20px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   background: #1e293b;
   color: #fff;
   border-radius: 10px;
-  padding: 12px 16px 12px 20px;
+  padding: 11px 14px 11px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - 28px);
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
   z-index: 9999;
   animation: toast-in 0.25s ease;
 }
 
 @keyframes toast-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
@@ -738,13 +745,59 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════
-   모바일 반응형
+   반응형 – 768px 이하
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .section { padding: 8px 8px 0; }
+}
+
+/* ═══════════════════════════════════════════
+   반응형 – 480px 이하 (휴대폰 세로)
 ═══════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .app-title { font-size: 18px; }
-  .btn { font-size: 13px; height: 44px; min-height: 44px; }
-  .temp-input { width: 64px; font-size: 14px; }
-  .note-input { width: 140px; }
-  .predicted-value { font-size: 16px; }
-  .confirmed-value { font-size: 16px; }
+  :root {
+    --col-batch:     48px;
+    --col-temp:      76px;
+    --col-predicted: 92px;
+    --col-confirmed: 104px;
+    --col-note:      100px;
+    --col-del:       32px;
+  }
+
+  .app-header    { padding: 11px 12px 10px; }
+  .app-title     { font-size: 17px; }
+  .app-desc      { font-size: 10px; }
+  .meta-chip     { font-size: 10px; padding: 2px 7px; }
+
+  .section       { padding: 6px 6px 0; }
+
+  .reference-box { padding: 10px 11px; }
+  .baseline-card { padding: 10px 11px; }
+
+  .date-group-label { font-size: 11px; margin: 0 6px; }
+
+  .record-table  { font-size: 11px; }
+  .record-table th { padding: 6px 3px; font-size: 10px; }
+  .record-table td { padding: 5px 3px; }
+
+  .temp-input    { width: 50px; font-size: 12px; padding: 4px 4px; }
+  .note-input    { width: 88px; font-size: 10px; }
+
+  .predicted-value { font-size: 14px; }
+  .confirmed-value { font-size: 14px; }
+
+  .batch-no      { font-size: 11px; }
+  .status-badge  { font-size: 9px; padding: 1px 4px; }
+
+  .btn-confirm, .btn-input {
+    font-size: 10px;
+    height: 27px; min-height: 27px;
+    padding: 0 6px;
+  }
+  .btn-row       { gap: 3px; }
+
+  .btn           { height: 42px; min-height: 42px; font-size: 12px; }
+  .btn-grid      { gap: 6px; }
+
+  .bottom-btn-section { padding-top: 12px; padding-bottom: 24px; }
 }

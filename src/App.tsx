@@ -534,8 +534,6 @@ const RecordRow = memo(function RecordRow({
         </div>
       </td>
 
-      <td className="td-date">{record.date}</td>
-
       <td className="td-temp">
         <TempInput value={record.roomTemp} onChange={handleRoomTempChange} ariaLabel="현재 온도" />
       </td>
@@ -599,7 +597,6 @@ const TableHeader = memo(function TableHeader() {
     <thead>
       <tr>
         <th className="th-sticky">회차</th>
-        <th>날짜</th>
         <th>현재 온도</th>
         <th>밀가루 온도</th>
         <th className="th-predicted">물 온도 (예측)</th>
@@ -738,7 +735,7 @@ export default function App() {
           <span className="meta-chip highlight">목표 반죽 온도 {TARGET_DOUGH_TEMP.toFixed(1)}°C 고정</span>
         </div>
         <p className="app-desc">
-          오늘 1회차는 어제 마지막 회차 기준값으로 계산하고, 2회차부터는 바로 직전 오늘 회차를 기준으로 계산합니다.
+          1회차는 어제 기준값, 2회차부터는 직전 회차 기준으로 계산합니다.
         </p>
       </header>
 
