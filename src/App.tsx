@@ -116,7 +116,7 @@ function getRowStatus(record: DoughRecord, predictedVal: number | null): { key: 
   if (predictedVal === null)                                    return { key: 'nobase',     label: '기준값 부족' };
   if (record.confirmedWaterTemp === null)                       return { key: 'predicted',  label: '예측 완료' };
   if (record.doughTemp1 === null && record.doughTemp2 === null) return { key: 'water-done', label: '물 온도 확정' };
-  return { key: 'done', label: '반죽 온도 완료' };
+  return { key: 'done', label: '반죽 완료' };
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────

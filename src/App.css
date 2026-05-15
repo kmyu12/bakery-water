@@ -486,7 +486,7 @@ html, body {
    컬럼 너비 (CSS 변수로 관리)
 ═══════════════════════════════════════════ */
 :root {
-  --col-batch:     60px;
+  --col-batch:     52px;
   --col-temp:      66px;
   --col-predicted: 84px;
   --col-confirmed: 92px;
@@ -759,7 +759,7 @@ html, body {
 ═══════════════════════════════════════════ */
 @media (max-width: 480px) {
   :root {
-    --col-batch:     60px;
+    --col-batch:     48px;
     --col-temp:      62px;
     --col-predicted: 80px;
     --col-confirmed: 88px;
