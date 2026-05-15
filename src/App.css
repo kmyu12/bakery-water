@@ -348,15 +348,17 @@ html, body {
 .btn-confirm {
   background: #16a34a; color: #fff;
   font-size: 10px; font-weight: 700;
-  height: 24px; min-height: 24px;
-  padding: 0 6px; border-radius: 5px;
+  height: 20px; min-height: 20px;
+  line-height: 1.1;
+  padding: 1px 6px; border-radius: 5px;
   white-space: nowrap;
 }
 .btn-input {
   background: #ca8a04; color: #fff;
   font-size: 10px; font-weight: 700;
-  height: 24px; min-height: 24px;
-  padding: 0 6px; border-radius: 5px;
+  height: 20px; min-height: 20px;
+  line-height: 1.1;
+  padding: 1px 6px; border-radius: 5px;
   white-space: nowrap;
 }
 .btn-save {
@@ -549,10 +551,10 @@ html, body {
    예측값 표시
 ═══════════════════════════════════════════ */
 .predicted-value {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 600;
   color: #1d4ed8;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   display: block;
 }
 
@@ -572,11 +574,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
 }
 
 .confirmed-display {
-  min-height: 22px;
+  min-height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -607,7 +609,7 @@ html, body {
 ═══════════════════════════════════════════ */
 .btn-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   justify-content: center;
   flex-wrap: nowrap;
 }
@@ -627,7 +629,7 @@ html, body {
   padding: 4px 3px;
   border: 1.5px solid #d1d5db;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
   background: #fff;
@@ -781,22 +783,23 @@ html, body {
   .record-table th { padding: 4px 2px; font-size: 10px; }
   .record-table td { padding: 3px 2px; }
 
-  .temp-input    { width: 44px; font-size: 14px; padding: 3px 2px; }
+  .temp-input    { width: 44px; font-size: 12px; padding: 3px 2px; }
   .unit          { font-size: 9px; }
   .note-input    { width: 84px; font-size: 10px; padding: 3px 4px; }
 
-  .predicted-value { font-size: 16px; }
+  .predicted-value { font-size: 14px; }
   .confirmed-value { font-size: 15px; }
 
   .batch-no      { font-size: 11px; }
   .status-badge  { font-size: 9px; padding: 1px 4px; }
 
   .btn-confirm, .btn-input {
-    font-size: 10px;
-    height: 22px; min-height: 22px;
-    padding: 0 5px;
+    font-size: 9px;
+    height: 18px; min-height: 18px;
+    line-height: 1.1;
+    padding: 1px 5px;
   }
-  .btn-row       { gap: 3px; }
+  .btn-row       { gap: 2px; }
 
   .btn           { height: 42px; min-height: 42px; font-size: 12px; }
   .btn-grid      { gap: 6px; }
