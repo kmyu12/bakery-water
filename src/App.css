@@ -347,16 +347,16 @@ html, body {
 /* 테이블 내부 소형 버튼 */
 .btn-confirm {
   background: #16a34a; color: #fff;
-  font-size: 11px; font-weight: 700;
-  height: 30px; min-height: 30px;
-  padding: 0 8px; border-radius: 5px;
+  font-size: 10px; font-weight: 700;
+  height: 24px; min-height: 24px;
+  padding: 0 6px; border-radius: 5px;
   white-space: nowrap;
 }
 .btn-input {
   background: #ca8a04; color: #fff;
-  font-size: 11px; font-weight: 700;
-  height: 30px; min-height: 30px;
-  padding: 0 8px; border-radius: 5px;
+  font-size: 10px; font-weight: 700;
+  height: 24px; min-height: 24px;
+  padding: 0 6px; border-radius: 5px;
   white-space: nowrap;
 }
 .btn-save {
@@ -445,9 +445,9 @@ html, body {
 .record-table th {
   background: #f1f5f9;
   color: #475569;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 7px 5px;
+  padding: 5px 3px;
   text-align: center;
   white-space: nowrap;
   border-bottom: 2px solid #e2e8f0;
@@ -468,7 +468,7 @@ html, body {
 
 /* 데이터 행 */
 .record-table td {
-  padding: 6px 4px;
+  padding: 4px 3px;
   border-bottom: 1px solid #f3f4f6;
   border-right: 1px solid #f3f4f6;
   vertical-align: middle;
@@ -485,11 +485,11 @@ html, body {
 ═══════════════════════════════════════════ */
 :root {
   --col-batch:     60px;
-  --col-temp:      88px;
-  --col-predicted: 96px;
-  --col-confirmed: 110px;
-  --col-note:      120px;
-  --col-del:       36px;
+  --col-temp:      66px;
+  --col-predicted: 84px;
+  --col-confirmed: 92px;
+  --col-note:      112px;
+  --col-del:       34px;
 }
 
 .td-batch     { min-width: var(--col-batch);     }
@@ -549,7 +549,7 @@ html, body {
    예측값 표시
 ═══════════════════════════════════════════ */
 .predicted-value {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   color: #1d4ed8;
   letter-spacing: -0.5px;
@@ -559,9 +559,10 @@ html, body {
 .predicted-status {
   font-size: 10px;
   color: #94a3b8;
-  line-height: 1.4;
+  line-height: 1.3;
   display: block;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 /* ═══════════════════════════════════════════
@@ -582,7 +583,7 @@ html, body {
 }
 
 .confirmed-value {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
   color: #15803d;
   letter-spacing: -0.5px;
@@ -622,13 +623,13 @@ html, body {
 }
 
 .temp-input {
-  width: 58px;
-  padding: 5px 5px;
+  width: 48px;
+  padding: 4px 3px;
   border: 1.5px solid #d1d5db;
   border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: right;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
   background: #fff;
   color: #111;
   -moz-appearance: textfield;
@@ -756,12 +757,12 @@ html, body {
 ═══════════════════════════════════════════ */
 @media (max-width: 480px) {
   :root {
-    --col-batch:     48px;
-    --col-temp:      76px;
-    --col-predicted: 92px;
-    --col-confirmed: 104px;
-    --col-note:      100px;
-    --col-del:       32px;
+    --col-batch:     60px;
+    --col-temp:      62px;
+    --col-predicted: 80px;
+    --col-confirmed: 88px;
+    --col-note:      96px;
+    --col-del:       30px;
   }
 
   .app-header    { padding: 11px 12px 10px; }
@@ -777,22 +778,23 @@ html, body {
   .date-group-label { font-size: 11px; margin: 0 6px; }
 
   .record-table  { font-size: 11px; }
-  .record-table th { padding: 6px 3px; font-size: 10px; }
-  .record-table td { padding: 5px 3px; }
+  .record-table th { padding: 4px 2px; font-size: 10px; }
+  .record-table td { padding: 3px 2px; }
 
-  .temp-input    { width: 50px; font-size: 12px; padding: 4px 4px; }
-  .note-input    { width: 88px; font-size: 10px; }
+  .temp-input    { width: 44px; font-size: 14px; padding: 3px 2px; }
+  .unit          { font-size: 9px; }
+  .note-input    { width: 84px; font-size: 10px; padding: 3px 4px; }
 
-  .predicted-value { font-size: 14px; }
-  .confirmed-value { font-size: 14px; }
+  .predicted-value { font-size: 16px; }
+  .confirmed-value { font-size: 15px; }
 
   .batch-no      { font-size: 11px; }
   .status-badge  { font-size: 9px; padding: 1px 4px; }
 
   .btn-confirm, .btn-input {
     font-size: 10px;
-    height: 27px; min-height: 27px;
-    padding: 0 6px;
+    height: 22px; min-height: 22px;
+    padding: 0 5px;
   }
   .btn-row       { gap: 3px; }
 
