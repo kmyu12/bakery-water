@@ -31,11 +31,11 @@ export function getFinalDoughTemp(record: DoughRecord): number | null {
  * 수식:
  * predictedWaterTemp =
  *   previousConfirmedWaterTemp
- *   + (27.0 - previousDoughTemp)
- *   - (currentFlourTemp - previousFlourTemp)
+ *   + (TARGET_DOUGH_TEMP - previousDoughTemp)
+ *   + (previousFlourTemp - currentFlourTemp)
  *
  * - 필요한 값 중 하나라도 null이면 null 반환
- * - 숫자가 아닌 값이 들어오면 null 반환
+ * - 유한하지 않은 값이 들어오면 null 반환
  * - 결과는 소수점 첫째 자리까지 반올림
  */
 export function calculatePredictedWaterTemp(
@@ -64,8 +64,8 @@ export function calculatePredictedWaterTemp(
 
   const result =
     previousConfirmedWaterTemp +
-    (TARGET_DOUGH_TEMP - previousDoughTemp) -
-    (currentFlourTemp - previousFlourTemp);
+    (TARGET_DOUGH_TEMP - previousDoughTemp) +
+    (previousFlourTemp - currentFlourTemp);
 
   return roundToOneDecimal(result);
 }
