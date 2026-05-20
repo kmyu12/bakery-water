@@ -518,7 +518,6 @@ const RecordRow = memo(function RecordRow({
     onUpdate({ ...record, doughTemp2: v, updatedAt: isoNow() });
   }, [record, onUpdate]);
 
-  const handleRoomTempChange    = useCallback((v: number | null) => field('roomTemp', v), [field]);
   const handleFlourTempChange   = useCallback((v: number | null) => field('flourTemp', v), [field]);
   const handleDoughTemp1Change  = useCallback((v: number | null) => field('doughTemp1', v), [field]);
   const handleConfirmedUpdate   = useCallback((id: string, v: number | null) => {
@@ -532,10 +531,6 @@ const RecordRow = memo(function RecordRow({
           <span className="batch-no">{record.batchNo}회차</span>
           <span className={`status-badge badge-${rowStatus.key}`}>{rowStatus.label}</span>
         </div>
-      </td>
-
-      <td className="td-temp">
-        <TempInput value={record.roomTemp} onChange={handleRoomTempChange} ariaLabel="현재 온도" />
       </td>
 
       <td className="td-temp">
@@ -597,7 +592,6 @@ const TableHeader = memo(function TableHeader() {
     <thead>
       <tr>
         <th className="th-sticky">회차</th>
-        <th>현재 온도</th>
         <th>밀가루 온도</th>
         <th className="th-predicted">물 온도 (예측)</th>
         <th className="th-confirmed">물 온도 (확정)</th>
