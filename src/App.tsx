@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import type { DoughRecord, YesterdayBaseline } from './types';
 import {
   calculatePredictedWaterTemp,
-  getFinalDoughTemp,
-  getFinalDoughTempFromBaseline,
   getBaselineForRecord,
   validateDoughTemps,
   roundToOneDecimal,
@@ -54,7 +52,6 @@ type PredictedStatus =
   | 'no-prev-water'
   | 'no-prev-flour'
   | 'no-prev-dough'
-  | 'dough-invalid'
   | 'calc-error';
 
 type PredictedResult =
@@ -67,7 +64,6 @@ const PREDICTED_LABELS: Record<Exclude<PredictedStatus, 'ok'>, string> = {
   'no-prev-water': '기준 물 온도 없음',
   'no-prev-flour': '기준 밀가루 온도 없음',
   'no-prev-dough': '기준 반죽 온도 없음',
-  'dough-invalid': '반죽 온도 확인 필요',
   'calc-error':    '예측 불가',
 };
 
@@ -84,16 +80,7 @@ function getPredictedResult(
   if (baseline.confirmedWaterTemp === null) return { value: null, status: 'no-prev-water' };
   if (baseline.flourTemp === null)          return { value: null, status: 'no-prev-flour' };
 
-  // 기준값 반죽 온도 2차가 1차보다 낮으면 계산 불가
-  if (
-    baseline.doughTemp1 !== null &&
-    baseline.doughTemp2 !== null &&
-    baseline.doughTemp2 < baseline.doughTemp1
-  ) {
-    return { value: null, status: 'dough-invalid' };
-  }
-
-  const prevDoughTemp = baseline.doughTemp2 ?? baseline.doughTemp1;
+  const prevDoughTemp = baseline.doughTemp1;
   if (prevDoughTemp === null) return { value: null, status: 'no-prev-dough' };
 
   const val = calculatePredictedWaterTemp({
@@ -217,9 +204,7 @@ const YesterdayBaselineTable = memo(function YesterdayBaselineTable({
     upd({ doughTemp2: v });
   }
 
-  const finalDough = getFinalDoughTempFromBaseline(b);
-  const doughBasis = b.doughTemp2 !== null ? '2차 기준' : b.doughTemp1 !== null ? '1차 기준' : null;
-  const isComplete = b.flourTemp !== null && b.confirmedWaterTemp !== null && finalDough !== null;
+  const isComplete = b.flourTemp !== null && b.confirmedWaterTemp !== null && b.doughTemp1 !== null;
 
   return (
     <div className="date-group">
@@ -277,10 +262,7 @@ const YesterdayBaselineTable = memo(function YesterdayBaselineTable({
                 <TempInput value={b.doughTemp1} onChange={(v) => upd({ doughTemp1: v })} ariaLabel="어제 반죽 온도 1차" />
               </td>
               <td className="td-temp">
-                <div className="dough2-cell">
-                  <TempInput value={b.doughTemp2} onChange={handleDoughTemp2Change} ariaLabel="어제 반죽 온도 2차" />
-                  {doughBasis && <span className="basis-badge">{doughBasis}</span>}
-                </div>
+                <TempInput value={b.doughTemp2} onChange={handleDoughTemp2Change} ariaLabel="어제 반죽 온도 2차" />
               </td>
               <td className="td-note">
                 <input
@@ -329,8 +311,7 @@ const NextBatchReferenceCard = memo(function NextBatchReferenceCard({
         srcName: `오늘 ${lastToday.batchNo}회차`,
         flourTemp: lastToday.flourTemp,
         confirmedWaterTemp: lastToday.confirmedWaterTemp,
-        finalDough: getFinalDoughTemp(lastToday),
-        doughBasis: lastToday.doughTemp2 !== null ? '2차 기준' : lastToday.doughTemp1 !== null ? '1차 기준' : null,
+        finalDough: lastToday.doughTemp1,
       };
     }
     if (yesterdayBaseline) {
@@ -339,8 +320,7 @@ const NextBatchReferenceCard = memo(function NextBatchReferenceCard({
         srcName: b.batchNo ? `어제 ${b.batchNo}회차` : '어제 마지막 회차',
         flourTemp: b.flourTemp,
         confirmedWaterTemp: b.confirmedWaterTemp,
-        finalDough: getFinalDoughTempFromBaseline(b),
-        doughBasis: b.doughTemp2 !== null ? '2차 기준' : b.doughTemp1 !== null ? '1차 기준' : null,
+        finalDough: b.doughTemp1,
       };
     }
     return null;
@@ -374,13 +354,11 @@ const NextBatchReferenceCard = memo(function NextBatchReferenceCard({
         <span className="ref-value">
           {ref.confirmedWaterTemp !== null ? `${ref.confirmedWaterTemp.toFixed(1)} °C` : <span className="ref-missing">없음</span>}
         </span>
-        <span className="ref-label">반죽 온도</span>
+        <span className="ref-label">반죽 온도 1차</span>
         <span className="ref-value">
-          {ref.finalDough !== null ? (
-            <>{ref.finalDough.toFixed(1)} °C {ref.doughBasis && <span className="ref-badge">{ref.doughBasis}</span>}</>
-          ) : (
-            <span className="ref-missing">없음</span>
-          )}
+          {ref.finalDough !== null
+            ? `${ref.finalDough.toFixed(1)} °C`
+            : <span className="ref-missing">없음</span>}
         </span>
       </div>
       {missing.length > 0 && (
@@ -556,9 +534,7 @@ const RecordRow = memo(function RecordRow({
       </td>
 
       <td className="td-temp">
-        <div className="dough2-cell">
-          <TempInput value={record.doughTemp2} onChange={handleDoughTemp2Change} ariaLabel="반죽 온도 2차" />
-        </div>
+        <TempInput value={record.doughTemp2} onChange={handleDoughTemp2Change} ariaLabel="반죽 온도 2차" />
       </td>
 
       <td className="td-note">
