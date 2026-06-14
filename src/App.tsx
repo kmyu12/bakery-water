@@ -57,6 +57,11 @@ function sortByCreatedAt<T extends { createdAt: string }>(arr: T[]): T[] {
   );
 }
 
+/** HH:mm 형식 시간 문자열 반환 */
+function formatHHMM(date: Date): string {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
 /** 두 DoughRecord를 비교해서 DB에 저장 가능한 변경 필드만 추출한다. */
 function computeRecordPatch(
   prev: DoughRecord,
@@ -616,14 +621,18 @@ export default function App() {
   const [toast, setToast] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [dbError, setDbError] = useState<string | null>(null);
   const [storageMode, setStorageMode] = useState<'supabase' | 'local' | null>(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!isSupabaseEnabled) {
       setTodayRecords(loadAndCleanTodayRecords());
       setYesterdayBaseline(loadYesterdayBaseline());
       setStorageMode('local');
+      setLastUpdatedAt(formatHHMM(new Date()));
       return;
     }
 
@@ -640,17 +649,20 @@ export default function App() {
         setTodayRecords(records);
         setYesterdayBaseline(baseline);
         setStorageMode('supabase');
+        setLastUpdatedAt(formatHHMM(new Date()));
       } catch (e) {
         if (e instanceof SupabaseNotConfiguredError) {
           setTodayRecords(loadAndCleanTodayRecords());
           setYesterdayBaseline(loadYesterdayBaseline());
           setStorageMode('local');
+          setLastUpdatedAt(formatHHMM(new Date()));
         } else {
           const msg = e instanceof Error ? e.message : 'DB 오류가 발생했습니다.';
           setDbError(msg);
           setTodayRecords(loadAndCleanTodayRecords());
           setYesterdayBaseline(loadYesterdayBaseline());
           setStorageMode('local');
+          setLastUpdatedAt(formatHHMM(new Date()));
         }
       } finally {
         setIsLoading(false);
@@ -681,6 +693,39 @@ export default function App() {
       setDbError(e instanceof Error ? e.message : '어제 기준값 재로딩 실패');
     }
   }, []);
+
+  /**
+   * 수동 새로고침 버튼 전용 함수.
+   * · Supabase 모드: cleanup → 오늘 기록 + 기준값 재로딩 → 갱신 시간 갱신
+   * · Local 모드: localStorage 재로딩 → 갱신 시간 갱신
+   * · 이미 로딩/저장/갱신 중이면 무시 (버튼도 disabled이지만 안전 guard 유지)
+   */
+  const refreshData = useCallback(async () => {
+    if (isLoading || isSaving || isRefreshing) return;
+
+    if (storageMode === 'supabase') {
+      setIsRefreshing(true);
+      try {
+        await cleanupOldTodayRecords(WORKSPACE_ID);
+        const [records, baseline] = await Promise.all([
+          fetchTodayRecords(WORKSPACE_ID, getTodayString()),
+          fetchYesterdayBaseline(WORKSPACE_ID),
+        ]);
+        setTodayRecords(records);
+        setYesterdayBaseline(baseline);
+        setLastUpdatedAt(formatHHMM(new Date()));
+      } catch (e) {
+        console.error('새로고침 실패:', e);
+        setDbError(e instanceof Error ? e.message : '새로고침 실패');
+      } finally {
+        setIsRefreshing(false);
+      }
+    } else if (storageMode === 'local') {
+      setTodayRecords(loadAndCleanTodayRecords());
+      setYesterdayBaseline(loadYesterdayBaseline());
+      setLastUpdatedAt(formatHHMM(new Date()));
+    }
+  }, [storageMode, isLoading, isSaving, isRefreshing]);
 
   const persistRecords = useCallback((updated: DoughRecord[]) => {
     setTodayRecords(updated);
@@ -919,20 +964,34 @@ export default function App() {
           {storageMode === 'local' && (
             <span className="meta-chip chip-local">📱 이 기기 저장 사용 중</span>
           )}
+          {lastUpdatedAt && (
+            <span className="meta-chip chip-updated">갱신 {lastUpdatedAt}</span>
+          )}
+          <button
+            className="meta-chip meta-refresh-btn"
+            onClick={refreshData}
+            disabled={isRefreshing || isLoading || isSaving || storageMode === null}
+            aria-label="데이터 새로고침"
+          >
+            {isRefreshing ? '갱신 중…' : '↺ 새로고침'}
+          </button>
         </div>
         <p className="app-desc">
           1회차는 어제 기준값, 2회차부터는 직전 회차 기준으로 계산합니다.
         </p>
       </header>
 
-      {/* ── 로딩 / 저장 중 / DB 에러 표시 ── */}
+      {/* ── 로딩 / 갱신 중 / 저장 중 / DB 에러 표시 ── */}
       {isLoading && (
         <div className="db-status-bar db-loading" role="status">불러오는 중…</div>
       )}
-      {!isLoading && isSaving && (
+      {!isLoading && isRefreshing && (
+        <div className="db-status-bar db-loading" role="status">갱신 중…</div>
+      )}
+      {!isLoading && !isRefreshing && isSaving && (
         <div className="db-status-bar db-saving" role="status">저장 중…</div>
       )}
-      {!isLoading && !isSaving && dbError && (
+      {!isLoading && !isRefreshing && !isSaving && dbError && (
         <div className="db-status-bar db-error" role="alert">
           <span>DB 오류: {dbError}</span>
           <button className="db-error-close" onClick={() => setDbError(null)} aria-label="에러 닫기">✕</button>
