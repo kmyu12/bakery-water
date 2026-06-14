@@ -16,6 +16,20 @@ import {
   clearYesterdayBaseline,
 } from './storage';
 import { getTodayString, isoNow } from './dateUtils';
+import { isSupabaseEnabled } from './supabaseClient';
+import {
+  cleanupOldTodayRecords,
+  fetchTodayRecords,
+  fetchYesterdayBaseline,
+  createTodayRecord,
+  updateTodayRecord,
+  deleteTodayRecord,
+  deleteTodayRecordsByDate,
+  upsertYesterdayBaseline,
+  deleteYesterdayBaseline,
+  SupabaseNotConfiguredError,
+  WORKSPACE_ID,
+} from './db';
 import './App.css';
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────
@@ -41,6 +55,20 @@ function sortByCreatedAt<T extends { createdAt: string }>(arr: T[]): T[] {
   return [...arr].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
+}
+
+/** 두 DoughRecord를 비교해서 DB에 저장 가능한 변경 필드만 추출한다. */
+function computeRecordPatch(
+  prev: DoughRecord,
+  next: DoughRecord
+): Partial<Pick<DoughRecord, 'flourTemp' | 'confirmedWaterTemp' | 'doughTemp1' | 'doughTemp2' | 'note'>> {
+  const patch: Partial<Pick<DoughRecord, 'flourTemp' | 'confirmedWaterTemp' | 'doughTemp1' | 'doughTemp2' | 'note'>> = {};
+  if (prev.flourTemp           !== next.flourTemp)           patch.flourTemp           = next.flourTemp;
+  if (prev.confirmedWaterTemp  !== next.confirmedWaterTemp)  patch.confirmedWaterTemp  = next.confirmedWaterTemp;
+  if (prev.doughTemp1          !== next.doughTemp1)          patch.doughTemp1          = next.doughTemp1;
+  if (prev.doughTemp2          !== next.doughTemp2)          patch.doughTemp2          = next.doughTemp2;
+  if (prev.note                !== next.note)                patch.note                = next.note;
+  return patch;
 }
 
 // ── 예측 결과 타입 ─────────────────────────────────────────────────────────
@@ -586,24 +614,102 @@ export default function App() {
   const [todayRecords, setTodayRecords] = useState<DoughRecord[]>([]);
   const [yesterdayBaseline, setYesterdayBaseline] = useState<YesterdayBaseline | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [dbError, setDbError] = useState<string | null>(null);
+  const [storageMode, setStorageMode] = useState<'supabase' | 'local' | null>(null);
 
   useEffect(() => {
-    setTodayRecords(loadAndCleanTodayRecords());
-    setYesterdayBaseline(loadYesterdayBaseline());
+    if (!isSupabaseEnabled) {
+      setTodayRecords(loadAndCleanTodayRecords());
+      setYesterdayBaseline(loadYesterdayBaseline());
+      setStorageMode('local');
+      return;
+    }
+
+    setIsLoading(true);
+    const todayStr = getTodayString();
+
+    (async () => {
+      try {
+        await cleanupOldTodayRecords(WORKSPACE_ID);
+        const [records, baseline] = await Promise.all([
+          fetchTodayRecords(WORKSPACE_ID, todayStr),
+          fetchYesterdayBaseline(WORKSPACE_ID),
+        ]);
+        setTodayRecords(records);
+        setYesterdayBaseline(baseline);
+        setStorageMode('supabase');
+      } catch (e) {
+        if (e instanceof SupabaseNotConfiguredError) {
+          setTodayRecords(loadAndCleanTodayRecords());
+          setYesterdayBaseline(loadYesterdayBaseline());
+          setStorageMode('local');
+        } else {
+          const msg = e instanceof Error ? e.message : 'DB 오류가 발생했습니다.';
+          setDbError(msg);
+          setTodayRecords(loadAndCleanTodayRecords());
+          setYesterdayBaseline(loadYesterdayBaseline());
+          setStorageMode('local');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, []);
 
   const showToast = useCallback((msg: string) => setToast(msg), []);
+
+  /** Supabase에서 오늘 기록을 다시 불러와 state에 반영한다. */
+  const reloadTodayFromDb = useCallback(async () => {
+    try {
+      const records = await fetchTodayRecords(WORKSPACE_ID, getTodayString());
+      setTodayRecords(records);
+    } catch (e) {
+      console.error('today_records 재로딩 실패:', e);
+      setDbError(e instanceof Error ? e.message : '오늘 기록 재로딩 실패');
+    }
+  }, []);
+
+  /** Supabase에서 어제 기준값을 다시 불러와 state에 반영한다. */
+  const reloadBaselineFromDb = useCallback(async () => {
+    try {
+      const baseline = await fetchYesterdayBaseline(WORKSPACE_ID);
+      setYesterdayBaseline(baseline);
+    } catch (e) {
+      console.error('yesterday_baseline 재로딩 실패:', e);
+      setDbError(e instanceof Error ? e.message : '어제 기준값 재로딩 실패');
+    }
+  }, []);
 
   const persistRecords = useCallback((updated: DoughRecord[]) => {
     setTodayRecords(updated);
     saveTodayRecords(updated);
   }, []);
 
+  /**
+   * 어제 기준값 저장.
+   * · Supabase 모드: 즉시 state 반영(optimistic) → 비동기 upsert → 실패 시 DB 재로딩
+   * · Local 모드: state + localStorage 동기 저장
+   */
   const persistBaseline = useCallback((b: YesterdayBaseline) => {
     setYesterdayBaseline(b);
-    saveYesterdayBaseline(b);
-  }, []);
+    if (storageMode === 'supabase') {
+      upsertYesterdayBaseline(b, WORKSPACE_ID).catch((e) => {
+        console.error('어제 기준값 저장 실패:', e);
+        setDbError(e instanceof Error ? e.message : '어제 기준값 저장 실패');
+        reloadBaselineFromDb();
+      });
+    } else {
+      saveYesterdayBaseline(b);
+    }
+  }, [storageMode, reloadBaselineFromDb]);
 
+  /**
+   * 새 회차 추가.
+   * · Supabase 모드: createTodayRecord → DB 반환 UUID로 재로딩
+   * · Local 모드: persistRecords (state + localStorage)
+   */
   const addBatch = useCallback(() => {
     const today = getTodayString();
     const now = isoNow();
@@ -621,32 +727,120 @@ export default function App() {
       createdAt: now,
       updatedAt: now,
     };
-    persistRecords([...todayRecords, newRecord]);
-  }, [todayRecords, persistRecords]);
 
+    if (storageMode === 'supabase') {
+      setIsSaving(true);
+      createTodayRecord(newRecord, WORKSPACE_ID)
+        .then(() => reloadTodayFromDb())
+        .catch((e) => {
+          console.error('새 회차 추가 실패:', e);
+          setDbError(e instanceof Error ? e.message : '새 회차 추가 실패');
+        })
+        .finally(() => setIsSaving(false));
+    } else {
+      persistRecords([...todayRecords, newRecord]);
+    }
+  }, [todayRecords, persistRecords, storageMode, reloadTodayFromDb]);
+
+  /**
+   * 회차 필드 수정.
+   * · Supabase 모드: 즉시 state 반영(optimistic) → 변경된 필드만 updateTodayRecord → 실패 시 재로딩
+   * · Local 모드: persistRecords
+   */
   const updateRecord = useCallback((updated: DoughRecord) => {
-    persistRecords(todayRecords.map((r) => (r.id === updated.id ? updated : r)));
-  }, [todayRecords, persistRecords]);
+    const newRecords = todayRecords.map((r) => (r.id === updated.id ? updated : r));
 
+    if (storageMode === 'supabase') {
+      setTodayRecords(newRecords);
+      const old = todayRecords.find((r) => r.id === updated.id);
+      if (old) {
+        const patch = computeRecordPatch(old, updated);
+        if (Object.keys(patch).length > 0) {
+          updateTodayRecord(updated.id, patch).catch((e) => {
+            console.error('회차 수정 실패:', e);
+            setDbError(e instanceof Error ? e.message : '회차 수정 실패');
+            reloadTodayFromDb();
+          });
+        }
+      }
+    } else {
+      persistRecords(newRecords);
+    }
+  }, [todayRecords, persistRecords, storageMode, reloadTodayFromDb]);
+
+  /**
+   * 회차 삭제.
+   * · Supabase 모드: deleteTodayRecord → 재로딩
+   * · Local 모드: persistRecords
+   */
   const deleteRecord = useCallback((id: string) => {
-    persistRecords(todayRecords.filter((r) => r.id !== id));
-  }, [todayRecords, persistRecords]);
+    if (storageMode === 'supabase') {
+      setIsSaving(true);
+      deleteTodayRecord(id)
+        .then(() => reloadTodayFromDb())
+        .catch((e) => {
+          console.error('회차 삭제 실패:', e);
+          setDbError(e instanceof Error ? e.message : '회차 삭제 실패');
+        })
+        .finally(() => setIsSaving(false));
+    } else {
+      persistRecords(todayRecords.filter((r) => r.id !== id));
+    }
+  }, [todayRecords, persistRecords, storageMode, reloadTodayFromDb]);
 
+  /**
+   * 오늘 기록 전체 초기화.
+   * · Supabase 모드: deleteTodayRecordsByDate → state 빈 배열
+   * · Local 모드: clearTodayRecords + state 초기화
+   */
   const handleClearToday = useCallback(() => {
     if (confirm('오늘 기록을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다.')) {
-      clearTodayRecords();
-      setTodayRecords([]);
-      showToast('오늘 기록이 초기화되었습니다.');
+      if (storageMode === 'supabase') {
+        setIsSaving(true);
+        deleteTodayRecordsByDate(WORKSPACE_ID, getTodayString())
+          .then(() => {
+            setTodayRecords([]);
+            showToast('오늘 기록이 초기화되었습니다.');
+          })
+          .catch((e) => {
+            console.error('오늘 기록 초기화 실패:', e);
+            setDbError(e instanceof Error ? e.message : '오늘 기록 초기화 실패');
+          })
+          .finally(() => setIsSaving(false));
+      } else {
+        clearTodayRecords();
+        setTodayRecords([]);
+        showToast('오늘 기록이 초기화되었습니다.');
+      }
     }
-  }, [showToast]);
+  }, [storageMode, showToast]);
 
+  /**
+   * 어제 기준값 초기화.
+   * · Supabase 모드: deleteYesterdayBaseline → state null
+   * · Local 모드: clearYesterdayBaseline + state null
+   */
   const handleClearBaseline = useCallback(() => {
     if (confirm('어제 마지막 회차 기준값을 삭제할까요?')) {
-      clearYesterdayBaseline();
-      setYesterdayBaseline(null);
-      showToast('어제 기준값이 초기화되었습니다.');
+      if (storageMode === 'supabase') {
+        setIsSaving(true);
+        deleteYesterdayBaseline(WORKSPACE_ID)
+          .then(() => {
+            setYesterdayBaseline(null);
+            showToast('어제 기준값이 초기화되었습니다.');
+          })
+          .catch((e) => {
+            console.error('어제 기준값 초기화 실패:', e);
+            setDbError(e instanceof Error ? e.message : '어제 기준값 초기화 실패');
+          })
+          .finally(() => setIsSaving(false));
+      } else {
+        clearYesterdayBaseline();
+        setYesterdayBaseline(null);
+        showToast('어제 기준값이 초기화되었습니다.');
+      }
     }
-  }, [showToast]);
+  }, [storageMode, showToast]);
 
   const handleExportCSV = useCallback(() => {
     const headers = ['회차', '날짜', '현재온도', '밀가루온도', '물온도(예측)', '물온도(확정)', '반죽온도1차', '반죽온도2차', '비고'];
@@ -681,15 +875,31 @@ export default function App() {
       note: '테스트 기준값', updatedAt: now,
     };
     const todayRecord: DoughRecord = {
-      id: 'test-today-1', date: today, batchNo: 1,
+      id: generateId(), date: today, batchNo: 1,
       roomTemp: null, flourTemp: 23.7, predictedWaterTemp: null,
       confirmedWaterTemp: null, doughTemp1: null, doughTemp2: null,
       note: '테스트 현재 회차', createdAt: now, updatedAt: now,
     };
-    persistBaseline(baseline);
-    persistRecords([todayRecord]);
-    showToast('테스트 데이터가 입력되었습니다. 오늘 1회차 예측값이 13.8°C인지 확인하세요.');
-  }, [persistBaseline, persistRecords, showToast]);
+
+    if (storageMode === 'supabase') {
+      setIsSaving(true);
+      Promise.all([
+        upsertYesterdayBaseline(baseline, WORKSPACE_ID),
+        createTodayRecord(todayRecord, WORKSPACE_ID),
+      ])
+        .then(() => Promise.all([reloadTodayFromDb(), reloadBaselineFromDb()]))
+        .then(() => showToast('테스트 데이터가 입력되었습니다. 오늘 1회차 예측값이 13.8°C인지 확인하세요.'))
+        .catch((e) => {
+          console.error('테스트 데이터 입력 실패:', e);
+          setDbError(e instanceof Error ? e.message : '테스트 데이터 입력 실패');
+        })
+        .finally(() => setIsSaving(false));
+    } else {
+      persistBaseline(baseline);
+      persistRecords([todayRecord]);
+      showToast('테스트 데이터가 입력되었습니다. 오늘 1회차 예측값이 13.8°C인지 확인하세요.');
+    }
+  }, [storageMode, persistBaseline, persistRecords, showToast, reloadTodayFromDb, reloadBaselineFromDb]);
 
   const sortedRecords = useMemo(() => sortByCreatedAt(todayRecords), [todayRecords]);
   const today = getTodayString();
@@ -703,11 +913,31 @@ export default function App() {
         <div className="header-meta">
           <span className="meta-chip">📅 {today}</span>
           <span className="meta-chip highlight">목표 반죽 온도 {TARGET_DOUGH_TEMP.toFixed(1)}°C 고정</span>
+          {storageMode === 'supabase' && (
+            <span className="meta-chip chip-supabase">☁ 공유 DB 사용 중</span>
+          )}
+          {storageMode === 'local' && (
+            <span className="meta-chip chip-local">📱 이 기기 저장 사용 중</span>
+          )}
         </div>
         <p className="app-desc">
           1회차는 어제 기준값, 2회차부터는 직전 회차 기준으로 계산합니다.
         </p>
       </header>
+
+      {/* ── 로딩 / 저장 중 / DB 에러 표시 ── */}
+      {isLoading && (
+        <div className="db-status-bar db-loading" role="status">불러오는 중…</div>
+      )}
+      {!isLoading && isSaving && (
+        <div className="db-status-bar db-saving" role="status">저장 중…</div>
+      )}
+      {!isLoading && !isSaving && dbError && (
+        <div className="db-status-bar db-error" role="alert">
+          <span>DB 오류: {dbError}</span>
+          <button className="db-error-close" onClick={() => setDbError(null)} aria-label="에러 닫기">✕</button>
+        </div>
+      )}
 
       {/* ── 어제 기준값 테이블 ── */}
       <section className="section table-section">
@@ -761,12 +991,17 @@ export default function App() {
       {/* ── 버튼 그리드 (맨 아래) ── */}
       <section className="section bottom-btn-section">
         <div className="btn-grid">
-          <button className="btn btn-primary btn-full" onClick={addBatch} aria-label="새 회차 추가">
-            ＋ 새 회차 추가
+          <button
+            className="btn btn-primary btn-full"
+            onClick={addBatch}
+            disabled={isSaving || isLoading}
+            aria-label="새 회차 추가"
+          >
+            {isSaving ? '저장 중…' : '＋ 새 회차 추가'}
           </button>
-          <button className="btn btn-test" onClick={handleLoadTestData}>테스트 데이터</button>
-          <button className="btn btn-secondary" onClick={handleExportCSV}>CSV 내보내기</button>
-          <button className="btn btn-danger" onClick={handleClearToday}>오늘 기록 초기화</button>
+          <button className="btn btn-test" onClick={handleLoadTestData} disabled={isSaving || isLoading}>테스트 데이터</button>
+          <button className="btn btn-secondary" onClick={handleExportCSV} disabled={isLoading}>CSV 내보내기</button>
+          <button className="btn btn-danger" onClick={handleClearToday} disabled={isSaving || isLoading}>오늘 기록 초기화</button>
         </div>
       </section>
 

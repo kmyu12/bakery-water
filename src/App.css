@@ -56,6 +56,57 @@ html, body {
   font-weight: 600;
 }
 
+.chip-supabase {
+  background: rgba(134, 239, 172, 0.18);
+  color: #86efac;
+  font-weight: 600;
+}
+
+.chip-local {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+/* ── DB 상태 바 (로딩 / 에러) ── */
+.db-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 14px;
+}
+
+.db-loading {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-bottom: 1px solid #bfdbfe;
+}
+
+.db-saving {
+  background: #f0fdf4;
+  color: #15803d;
+  border-bottom: 1px solid #86efac;
+}
+
+.db-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-bottom: 1px solid #fca5a5;
+}
+
+.db-error-close {
+  background: transparent;
+  border: none;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
 .app-desc {
   font-size: 11px;
   opacity: 0.7;
